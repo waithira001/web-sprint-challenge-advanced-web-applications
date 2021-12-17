@@ -4,6 +4,7 @@ import styled from 'styled-components';
 const BloomHeader = () => {
     return(
     <HeaderStyle>
+      <img width="40" src="https://assets-global.website-files.com/613baa7ad4f394142e65cb73/61b685d20908dc4ade4f8283_BloomTech-Logo-Black-FMA-p-500.png"/>
       <div>Sprint Challenge 3.3</div>
     </HeaderStyle>);
 }
