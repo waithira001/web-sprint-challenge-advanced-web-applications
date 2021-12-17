@@ -1,63 +1,81 @@
 import React, {useState} from 'react';
 import styled from 'styled-components';
+import axios from 'axios';
+
 import {useHistory} from 'react-router';
 
 const Login = () => {
-    const [credentials, setCredentials] = useState(state);
-    const {push} = useHistory();
-    const state ={
+    const [user, setUser] = useState({
         credentials: {
-            username:"", 
-            password: ""
-        },
-        errorMessage: ""
+            username: '',
+            password: ''
+        }
+    });
+    const [error, setError] = useState(null);
+    const { push } = useHistory();
+
+    const handleChange = (e) => {
+        setUser({
+            ...user,
+            credentials: {
+                ...user.credentials,
+                [e.target.name]: e.target.value
+            }
+        })
     }
 
-    axios.post("http://localhost:5000/api/login", this.state.credentials)
-    .then(resp => {
-      console.log(resp); 
-      localStorage.setItem("token", resp.data.token); 
-      push("/view");
-    })
-    .catch(err=> {
-     console.log(err); 
-     setCredentials({
-       ...state,
-       errorMessage: err.response.data.error 
-     })
-     })
-    
+    const handleLogin = (e) => {
+        e.preventDefault();
+        axios.post(`http://localhost:5000/api/login`, user.credentials)
+            .then(res => {
+                localStorage.setItem("token", res.data.token);
+                localStorage.setItem("username", res.data.username);
+                // localStorage.setItem("role", res.data.role);
+                push('/view');
+            })
+            .catch(err => {
+                console.log(err);
+                setError("Invalid Login Information");
+            })
+    }
+
     return(<ComponentContainer>
         <ModalContainer>
             <h1>Welcome to Blogger Pro</h1>
             <h2>Please enter your account information.</h2>
-
-            <FormGroup>
-        <label>
-          username: 
-          <input 
-            name="username"
-            type="text"
-            id="username"
-            value={state.credentials.username}
-            onChange={handleInputChange}
-            />
-        </label>
-        
-        <label>
-          password:
-          <input
-            name="password"
-            type="password"
-            id="password"
-            value={state.credentials.password}
-            onChange={handleInputChange} />
-        </label>
-    </FormGroup>
+            {/* <FormGroup> */}
+            <form onSubmit={handleLogin}>
+                <Label htmlFor="username">Username
+                    {/* <Input> */}
+                    <input
+                        type="text"
+                        name="username"
+                        id="username"
+                        value={user.credentials.username}
+                        onChange={handleChange}
+                    />
+                    {/* </Input> */}
+                </Label>
+                <Label htmlFor="password">Password
+                    <input
+                        type="text"
+                        name="password"
+                        id="password"
+                        value={user.credentials.password}
+                        onChange={handleChange}
+                    />
+                </Label>
+                {/* <Button> */}
+                <button id="submit">Submit</button>
+                {/* </Button> */}
+            </form>
+            {/* </FormGroup> */}
+            {
+                !error ? <p></p> : <p id="error">{error}</p>
+            }
         </ModalContainer>
     </ComponentContainer>);
 }
-
 export default Login;
 
 //Task List
